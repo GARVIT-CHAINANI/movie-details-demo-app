@@ -1,0 +1,84 @@
+.login_input-container {
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.input-div {
+  width: 70%;
+  padding: 0px 10px 0px 10px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+
+  box-shadow: #333 0px 0px 15px -10px;
+  display: flex;
+  align-items: center;
+}
+
+.input-div.id {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='%23703cff' viewBox='0 0 32 32'><path d='M16 14c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7zm0-12c-2.757 0-5 2.243-5 5s2.243 5 5 5 5-2.243 5-5-2.243-5-5-5zM27 32a1 1 0 0 1-1-1v-6.115a6.95 6.95 0 0 0-6.942-6.943h-6.116A6.95 6.95 0 0 0 6 24.885V31a1 1 0 1 1-2 0v-6.115c0-4.93 4.012-8.943 8.942-8.943h6.116c4.93 0 8.942 4.012 8.942 8.943V31a1 1 0 0 1-1 1z'/></svg>")
+    no-repeat 10px center;
+  background-size: 18px 18px;
+  background-color: #f7f8ff;
+  margin-bottom: 10px;
+}
+
+.input-div.password {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='%23703cff' viewBox='0 0 64 64'><path d='M25 38h14a3.003 3.003 0 0 0 3-3V22a3.003 3.003 0 0 0-3-3h-1v-3a6 6 0 0 0-12 0v3h-1a3.003 3.003 0 0 0-3 3v13a3.003 3.003 0 0 0 3 3zm3-22a4 4 0 0 1 8 0v3h-8zm-4 6a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H25a1 1 0 0 1-1-1zM31 29.816V32a1 1 0 0 0 2 0v-2.184a3 3 0 1 0-2 0zM32 26a1 1 0 1 1-1 1 1 1 0 0 1 1-1z'/></svg>")
+    no-repeat;
+  background-size: 43px 43px;
+  background-color: #f7f8ff;
+  margin-bottom: 3px;
+}
+
+.input-div input {
+  flex: 1;
+  padding: 10px 10px 10px 35px;
+  border: none;
+  border-radius: 20px;
+  font-size: 1em;
+  background: transparent;
+  color: #070027;
+  outline: none;
+  z-index: 1;
+}
+
+.input-div:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 5px var(--color-accent);
+}
+
+button {
+  margin-top: 5px;
+  width: 75%;
+  background-color: var(--color-secondary);
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 1em;
+  font-weight: 600;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.change {
+  /* margin-top: 0px; */
+  font-size: 0.9em;
+  color: var(--color-muted-dark);
+  text-align: center;
+}
+
+.change span {
+  font-weight: 600;
+  color: var(--color-text-dark);
+  cursor: pointer;
+}
