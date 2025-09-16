@@ -1,73 +1,83 @@
-// backend/server.js
 import express from "express";
 import bodyParser from "body-parser";
+import cors from "cors";
 import fs from "fs";
 
 const app = express();
+const PORT = 5000;
+const USERS_FILE = "users.json";
+
+// Middleware
+app.use(cors());
 app.use(bodyParser.json());
 
-// Generate random 6-digit OTP
-function generateOTP() {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+// Helper: Load users from file
+function loadUsers() {
+  if (!fs.existsSync(USERS_FILE)) {
+    fs.writeFileSync(USERS_FILE, JSON.stringify([]));
+  }
+  const data = fs.readFileSync(USERS_FILE);
+  return JSON.parse(data);
 }
 
-// ===== SIGNUP =====
-app.post("/signup", (req, res) => {
-  const { email } = req.body;
+// Helper: Save users to file
+function saveUsers(users) {
+  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+}
 
-  if (!email) return res.status(400).json({ message: "Email required" });
+// Register endpoint
+app.post("/register", (req, res) => {
+  const { userId, password } = req.body;
 
-  // Check if already exists
-  const existing = users.find((u) => u.email === email);
-  if (existing)
-    return res.status(400).json({ message: "Email already registered" });
+  if (!userId || !password) {
+    return res
+      .status(400)
+      .json({ message: "UserId and password are required." });
+  }
 
-  // Generate OTP
-  const otp = generateOTP();
+  const users = loadUsers();
 
-  // Store OTP temporarily in memory (not in data.js)
-  tempOtps[email] = otp;
+  // check uniqueness
+  if (users.find((u) => u.userId === userId)) {
+    return res.status(400).json({ message: "UserId already exists." });
+  }
 
-  // In real app: send OTP via email, here just return in response
-  res.json({ message: "OTP sent (mock)", otp });
+  users.push({ userId, password });
+  saveUsers(users);
+
+  return res.status(201).json({ message: "User registered successfully." });
 });
 
-// ===== VERIFY OTP & SET ID + PASSWORD =====
-app.post("/verify-otp", (req, res) => {
-  const { email, otp, userId, password } = req.body;
-
-  if (tempOtps[email] !== otp)
-    return res.status(400).json({ message: "Invalid OTP" });
-
-  // Save new user
-  const newUser = { email, userId, password };
-  users.push(newUser);
-
-  // Write to data.js file
-  fs.writeFileSync(
-    "./data.js",
-    `export const users = ${JSON.stringify(users, null, 2)};\n`
-  );
-
-  // Remove OTP from temp
-  delete tempOtps[email];
-
-  res.json({ message: "Signup successful", userId });
-});
-
-// ===== LOGIN =====
+// Login endpoint
 app.post("/login", (req, res) => {
   const { userId, password } = req.body;
 
-  const user = users.find(
-    (u) => u.userId === userId && u.password === password
-  );
-  if (!user) return res.status(401).json({ message: "Invalid credentials" });
+  if (!userId || !password) {
+    return res
+      .status(400)
+      .json({ message: "UserId and password are required." });
+  }
 
-  res.json({ message: "Login successful", email: user.email });
+  const users = loadUsers();
+  const user = users.find((u) => u.userId === userId);
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found." });
+  }
+
+  if (user.password !== password) {
+    return res.status(401).json({ message: "Invalid password." });
+  }
+
+  return res.status(200).json({ message: "Login successful." });
 });
 
-// Temporary OTP storage
-const tempOtps = {};
+// Get all users (for testing only, remove in production!)
+app.get("/users", (req, res) => {
+  const users = loadUsers();
+  res.json(users);
+});
 
-app.listen(5000, () => console.log("Server running on http://localhost:5000"));
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});

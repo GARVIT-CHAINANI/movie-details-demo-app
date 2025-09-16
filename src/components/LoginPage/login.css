@@ -82,3 +82,38 @@ button {
   color: var(--color-text-dark);
   cursor: pointer;
 }
+
+/* Inline error under each input */
+.error-text {
+  width: 70%;
+  margin: 1px auto 8px auto;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #d32f2f; /* Material Red */
+  text-align: left; /* keep aligned with input */
+  padding-left: 12px; /* shift in to align with input text */
+  box-sizing: border-box;
+}
+
+.form-message {
+  margin: 10px auto;
+  width: 100%;
+  font-size: 0.9rem;
+  text-align: center;
+  font-weight: 500;
+  min-height: 20px; /* reserve space */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  visibility: hidden; /* hidden until needed */
+}
+
+.form-message.error {
+  color: #d32f2f;
+  visibility: visible;
+}
+
+.form-message.success {
+  color: #2e7d32;
+  visibility: visible;
+}

@@ -91,7 +91,11 @@
   color: var(--color-muted-dark);
 }
 
-.login-footer span {
+/* .login-footer span {
+} */
+
+.login-footer a {
+  text-decoration: none;
   font-weight: bold;
   color: var(--color-text-dark);
 }

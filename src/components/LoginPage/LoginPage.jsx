@@ -8,15 +8,20 @@ export default function LoginPage() {
       <div className="login-card">
         <div className="login_side-section">
           <div className="login-logo">
-            <a href="#">
-              <img src={logo} alt="" srcset="" />
+            <a href="https://github.com/GARVIT-CHAINANI/movie-details-demo-app">
+              <img src={logo} alt="" />
             </a>
           </div>
           <LogIn />
           <div className="login-footer">
             <p>
-              This login page was built by <span>Garvit Chainani</span> using
-              React.js
+              This login page was built by{" "}
+              <span>
+                <a href="https://github.com/GARVIT-CHAINANI">
+                  Garvit Chainani{" "}
+                </a>
+              </span>
+              using React.js
             </p>
           </div>
         </div>
