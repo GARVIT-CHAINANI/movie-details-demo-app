@@ -10,16 +10,21 @@ import Dashboard from "./pages/Dashboard";
 import { AuthProvider } from "./components/LoginPage/AuthProvider";
 import AuthRedirect from "./components/AuthRedirect";
 import { db } from "./config/firebase";
+import ForgotPassword from "./pages/ForgotPassword";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <AuthRedirect />,
   },
+
   {
     path: "/auth",
     element: <Authentication />,
   },
+
+  { path: "/auth/forgot-password", element: <ForgotPassword /> },
+
   {
     element: <ProtectedRoutes />,
     children: [

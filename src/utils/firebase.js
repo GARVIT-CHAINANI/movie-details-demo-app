@@ -1,6 +1,7 @@
 import { auth, githubProvider, googleProvider } from "../config/firebase";
 import {
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
@@ -52,5 +53,17 @@ export const githubSignInFn = async () => {
     return githubSignIn;
   } catch (error) {
     console.error("Error during sign In with GITHUB:", error.message);
+  }
+};
+
+export const forgetPasswordFn = async (email) => {
+  try {
+    await sendPasswordResetEmail(auth, email, {
+      url: "http://localhost:5173/auth?mode=login",
+    });
+    alert("Password reset email sent! Please check your inbox or spam folder.");
+  } catch (error) {
+    console.error("Error sending password reset email:", error.message);
+    alert(error.message);
   }
 };

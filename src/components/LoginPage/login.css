@@ -59,7 +59,7 @@
 }
 
 /* Submit button */
-button {
+.input-container button {
   margin-top: 15px;
   width: 75%;
   background-color: var(--color-secondary, #703cff);
@@ -73,7 +73,7 @@ button {
   transition: all 0.3s ease;
 }
 
-button:hover {
+.input-container button:hover {
   background-color: #5c2fff;
 }
 
@@ -99,13 +99,14 @@ button:hover {
 
 .switch-mode a {
   font-weight: 600;
-  color: darkblue;
+  color: var(--color-secondary, #703cff);
   cursor: pointer;
   text-decoration: none;
 }
 
 .switch-mode a:hover {
   text-decoration: underline;
+  color: #5c2fff;
 }
 
 .signin-third-party {
@@ -139,4 +140,18 @@ button:hover {
 .error-message-banner p {
   margin: 0;
   color: #c33;
+}
+
+.forgot-password {
+  font-weight: 500;
+  width: 70%;
+  margin: -8px;
+  font-size: 0.9em;
+  color: var(--color-secondary, #703cff);
+  text-align: right;
+}
+
+.forgot-password:hover {
+  color: #5c2fff;
+  text-decoration: underline;
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./login.css";
 import {
   githubSignInFn,
@@ -195,7 +195,9 @@ const Login = ({
           />
           {errors.password && <p className="error-text">{errors.password}</p>}
         </div>
-
+        <div className="forgot-password">
+          <Link to="forgot-password">Forgot Password?</Link>
+        </div>
         <button type="submit" disabled={isLoading}>
           {isLoading ? "Please wait..." : submitButtonText}
         </button>
