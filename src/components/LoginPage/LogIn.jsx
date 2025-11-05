@@ -1,167 +1,254 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./login.css";
+import {
+  githubSignInFn,
+  googleSignInFn,
+  signInfn,
+  signUpfn,
+} from "../../utils/firebase";
+import { updateProfile } from "firebase/auth"; // ❌ removed onAuthStateChanged (unused)
+import { Button } from "antd";
+import { GithubFilled, GoogleOutlined } from "@ant-design/icons";
+import { auth } from "../../config/firebase";
+import { useAuth } from "../../utils/hooks/useAuth";
 
-export default function LogIn() {
-  const [isHaveAccount, setIsHaveAccount] = useState(true);
-  const [errors, setErrors] = useState({}); // ✅ store errors per field
-  const idRef = useRef(null);
-  const passwordRef = useRef(null);
+const Login = ({
+  formTitle,
+  userIdPlaceHolderMessage,
+  passwordPlaceHolderMessage,
+  submitButtonText,
+  isLoginMode,
+}) => {
+  const [enteredInput, setEnteredInput] = useState({
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+  });
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (idRef.current) idRef.current.value = "";
-    if (passwordRef.current) passwordRef.current.value = "";
-    setErrors({}); // clear errors when switching
-  }, [isHaveAccount]);
+  const navigate = useNavigate();
+  const { setCurrentUser } = useAuth();
 
-  function handleSignup() {
-    setIsHaveAccount(!isHaveAccount);
-  }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEnteredInput({ ...enteredInput, [name]: value });
 
-  async function createAccount(userId, password) {
-    const newErrors = {};
-    if (!userId) newErrors.userId = "User ID is required";
-    if (!password) newErrors.password = "Password is required";
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: "" });
     }
+  };
 
-    try {
-      const res = await fetch("http://localhost:5000/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, password }),
-      });
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setErrors({ general: data.message || "Signup failed" });
-        return;
-      }
-
-      setErrors({ general: "Account created successfully " });
-      idRef.current.value = "";
-      passwordRef.current.value = "";
-    } catch (err) {
-      setErrors({ general: "Something went wrong. Please try again." });
-    }
-  }
-
-  async function fetchAccount(userId, password) {
-    const newErrors = {};
-    if (!userId) newErrors.userId = "User ID is required";
-    if (!password) newErrors.password = "Password is required";
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    try {
-      const res = await fetch("http://localhost:5000/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setErrors({
-          general: "We couldn’t verify your login details. Please try again.",
-        });
-        return;
-      }
-
-      setErrors({ general: "Login successful " });
-      idRef.current.value = "";
-      passwordRef.current.value = "";
-    } catch (err) {
-      setErrors({ general: "Something went wrong. Please try again." });
-    }
-  }
-
-  function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const userId = idRef.current.value.trim();
-    const password = passwordRef.current.value.trim();
 
-    if (isHaveAccount) {
-      fetchAccount(userId, password);
-    } else {
-      createAccount(userId, password);
+    const { email, password, firstName, lastName } = enteredInput;
+    const validationErrors = {};
+
+    // Email validation
+    if (!email?.trim()) {
+      validationErrors.email = "Email is required";
+    } else if (!validateEmail(email)) {
+      validationErrors.email = "Please enter a valid email address";
     }
-  }
+
+    // Password validation
+    if (!password?.trim()) {
+      validationErrors.password = "Password is required";
+    } else if (password.length < 6) {
+      validationErrors.password = "Password must be at least 6 characters";
+    }
+
+    // Name validation for signup mode
+    if (!isLoginMode) {
+      if (!firstName?.trim()) {
+        validationErrors.firstName = "First name is required";
+      }
+      if (!lastName?.trim()) {
+        validationErrors.lastName = "Last name is required";
+      }
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setIsLoading(true);
+    setErrors({});
+
+    try {
+      if (isLoginMode) {
+        await signInfn(email, password);
+      } else {
+        const userCredential = await signUpfn(email, password);
+        const user = userCredential.user;
+
+        await updateProfile(user, {
+          displayName: `${firstName} ${lastName}`.trim(),
+        });
+
+        await user.reload();
+
+        // ✅ Immediately sync context
+        setCurrentUser(auth.currentUser);
+
+        console.log("✅ Display name updated:", auth.currentUser.displayName);
+      }
+
+      // ✅ Navigate after success
+      navigate("/dashboard");
+    } catch (error) {
+      console.error(error);
+      setErrors({
+        submit: error.message || "Something went wrong. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleThirdPartySignIn = async (signInFunction, provider) => {
+    setIsLoading(true);
+    setErrors({});
+
+    try {
+      await signInFunction();
+      navigate("/dashboard");
+    } catch (error) {
+      setErrors({
+        submit: `${provider} sign-in failed. Please try again.`,
+      });
+      console.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div className="login_input-container">
-      <h2>{isHaveAccount ? "USER LOGIN" : "SIGN-UP"}</h2>
+    <form className="login-form" onSubmit={handleSubmit}>
+      <h2>{formTitle}</h2>
 
-      <form className="input-container" onSubmit={handleSubmit}>
-        <div
-          className="input-div id"
-          style={errors.userId && { marginBottom: -10 }}
-        >
-          <input
-            type="text"
-            ref={idRef}
-            placeholder={
-              isHaveAccount ? "Enter your User ID" : "Set your User ID"
-            }
-          />
+      {errors.submit && (
+        <div className="error-message-banner">
+          <p>{errors.submit}</p>
         </div>
-        {errors.userId && <p className="error-text">{errors.userId}</p>}
+      )}
 
-        <div
-          className="input-div password"
-          style={
-            errors.password
-              ? { marginTop: -12, marginBottom: -10 }
-              : errors.general
-              ? { marginBottom: -12 }
-              : {}
-          }
-        >
-          <input
-            type="password"
-            ref={passwordRef}
-            placeholder={
-              isHaveAccount ? "Enter your Password" : "Set your Password"
-            }
-          />
-        </div>
-        {errors.password && <p className="error-text">{errors.password}</p>}
-
-        {errors.general && (
-          <p
-            className={`form-message ${
-              errors.general.includes("success") ? "success" : "error"
-            }`}
-          >
-            {errors.general}
-          </p>
+      <div className="input-container">
+        {!isLoginMode && (
+          <div className="name-container">
+            <div className="input-div">
+              <input
+                type="text"
+                name="firstName"
+                placeholder="First name"
+                value={enteredInput.firstName}
+                onChange={handleChange}
+                disabled={isLoading}
+              />
+              {errors.firstName && (
+                <p className="error-text">{errors.firstName}</p>
+              )}
+            </div>
+            <div className="input-div">
+              <input
+                type="text"
+                name="lastName"
+                placeholder="Last name"
+                value={enteredInput.lastName}
+                onChange={handleChange}
+                disabled={isLoading}
+              />
+              {errors.lastName && (
+                <p className="error-text">{errors.lastName}</p>
+              )}
+            </div>
+          </div>
         )}
 
-        <button type="submit" style={errors.general && { marginTop: -10 }}>
-          {isHaveAccount ? "Login" : "Confirm"}
-        </button>
-
-        <div className="change">
-          <p>
-            {isHaveAccount ? (
-              <>
-                Don&apos;t have an account?{" "}
-                <span onClick={handleSignup}>Sign-up</span>
-              </>
-            ) : (
-              <>
-                Already have an account?{" "}
-                <span onClick={handleSignup}>Log-in</span>
-              </>
-            )}
-          </p>
+        <div className="input-div">
+          <input
+            type="text"
+            name="email"
+            placeholder={userIdPlaceHolderMessage}
+            value={enteredInput.email}
+            onChange={handleChange}
+            disabled={isLoading}
+          />
+          {errors.email && <p className="error-text">{errors.email}</p>}
         </div>
-      </form>
-    </div>
+
+        <div className="input-div">
+          <input
+            type="password"
+            name="password"
+            placeholder={passwordPlaceHolderMessage}
+            value={enteredInput.password}
+            onChange={handleChange}
+            disabled={isLoading}
+          />
+          {errors.password && <p className="error-text">{errors.password}</p>}
+        </div>
+
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? "Please wait..." : submitButtonText}
+        </button>
+      </div>
+
+      <div className="signin-third-party">
+        <Button
+          icon={<GoogleOutlined />}
+          onClick={() => handleThirdPartySignIn(googleSignInFn, "Google")}
+          disabled={isLoading}
+        >
+          Sign in with Google
+        </Button>
+        <Button
+          icon={<GithubFilled />}
+          onClick={() => handleThirdPartySignIn(githubSignInFn, "Github")}
+          disabled={isLoading}
+        >
+          Sign in with Github
+        </Button>
+      </div>
+
+      <p className="switch-mode">
+        {isLoginMode ? (
+          <>
+            Don’t have an account?{" "}
+            <a
+              href="?mode=signup"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("?mode=signup");
+              }}
+            >
+              Sign Up
+            </a>
+          </>
+        ) : (
+          <>
+            Already have an account?{" "}
+            <a
+              href="?mode=login"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("?mode=login");
+              }}
+            >
+              Log In
+            </a>
+          </>
+        )}
+      </p>
+    </form>
   );
-}
+};
+
+export default Login;

@@ -1,14 +1,43 @@
-// import { useState } from "react";
-import LoginPage from "./components/loginPage/loginPage";
-
-// import logo from "./assets/ChatGPT Image Sep 12, 2025, 01_05_15 PM.png";
+import {
+  Navigate,
+  RouterProvider,
+  createBrowserRouter,
+} from "react-router-dom";
+import Authentication from "./pages/Authentication";
 import "./App.css";
+import ProtectedRoutes from "./components/LoginPage/ProtectedRoutes";
+import Dashboard from "./pages/Dashboard";
+import { AuthProvider } from "./components/LoginPage/AuthProvider";
+import AuthRedirect from "./components/AuthRedirect";
+import { db } from "./config/firebase";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <AuthRedirect />,
+  },
+  {
+    path: "/auth",
+    element: <Authentication />,
+  },
+  {
+    element: <ProtectedRoutes />,
+    children: [
+      {
+        path: "/dashboard",
+        element: <Dashboard />,
+      },
+    ],
+  },
+]);
 
 function App() {
+  console.log(db);
+
   return (
-    <>
-      <LoginPage />
-    </>
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   );
 }
 
