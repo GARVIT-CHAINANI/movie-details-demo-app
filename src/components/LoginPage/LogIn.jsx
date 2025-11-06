@@ -10,8 +10,9 @@ import {
 import { updateProfile } from "firebase/auth"; // ❌ removed onAuthStateChanged (unused)
 import { Button } from "antd";
 import { GithubFilled, GoogleOutlined } from "@ant-design/icons";
-import { auth } from "../../config/firebase";
+import { auth, db } from "../../config/firebase";
 import { useAuth } from "../../utils/hooks/useAuth";
+import { doc, updateDoc } from "firebase/firestore";
 
 const Login = ({
   formTitle,
@@ -90,6 +91,10 @@ const Login = ({
         const user = userCredential.user;
 
         await updateProfile(user, {
+          displayName: `${firstName} ${lastName}`.trim(),
+        });
+
+        await updateDoc(doc(db, "users", user.uid), {
           displayName: `${firstName} ${lastName}`.trim(),
         });
 

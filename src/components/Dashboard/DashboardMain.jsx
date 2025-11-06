@@ -1,13 +1,24 @@
-import { Button, Divider, Spin } from "antd";
+import { Button, Divider, Input, Spin } from "antd";
 import { signOut } from "firebase/auth";
 import { auth } from "../../config/firebase";
 import { useAuth } from "../../utils/hooks/useAuth";
 import "../Dashboard/dashboard.css";
-import { Loading3QuartersOutlined, LogoutOutlined } from "@ant-design/icons";
+import {
+  EditTwoTone,
+  Loading3QuartersOutlined,
+  LogoutOutlined,
+} from "@ant-design/icons";
+import { useState } from "react";
 
 const DashboardMain = () => {
+  const [isNameChanging, setIsNameChanging] = useState(false);
+
   const { currentUser } = useAuth();
   console.log(currentUser);
+
+  const clickHandler = () => {
+    setIsNameChanging(!isNameChanging);
+  };
 
   if (!currentUser) {
     return (
@@ -40,10 +51,22 @@ const DashboardMain = () => {
             }
             alt="user profile"
           />
+
           <p>
-            <b>
-              {currentUser.displayName || <Loading3QuartersOutlined spin />}
-            </b>
+            {!isNameChanging ? (
+              <b>
+                {currentUser.displayName || <Loading3QuartersOutlined spin />}
+              </b>
+            ) : (
+              <input />
+            )}
+
+            <Button
+              icon={<EditTwoTone />}
+              type="text"
+              size="large"
+              onClick={clickHandler}
+            />
           </p>
         </div>
 

@@ -9,7 +9,6 @@ import ProtectedRoutes from "./components/LoginPage/ProtectedRoutes";
 import Dashboard from "./pages/Dashboard";
 import { AuthProvider } from "./components/LoginPage/AuthProvider";
 import AuthRedirect from "./components/AuthRedirect";
-import { db } from "./config/firebase";
 import ForgotPassword from "./pages/ForgotPassword";
 
 const router = createBrowserRouter([
@@ -37,8 +36,6 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  console.log(db);
-
   return (
     <AuthProvider>
       <RouterProvider router={router} />
