@@ -1,10 +1,5 @@
-import {
-  Navigate,
-  RouterProvider,
-  createBrowserRouter,
-} from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Authentication from "./pages/Authentication";
-import "./App.css";
 import ProtectedRoutes from "./components/LoginPage/ProtectedRoutes";
 import Dashboard from "./pages/Dashboard";
 import { AuthProvider } from "./components/LoginPage/AuthProvider";

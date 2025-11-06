@@ -7,7 +7,6 @@
   width: 100%;
   height: 100vh;
   display: flex;
-  background: linear-gradient(to bottom, #e1fff3, #dbfbff);
   flex-direction: column;
   gap: 80px;
   align-items: center;
@@ -20,10 +19,10 @@
   gap: 12px;
   box-shadow: rgb(53, 52, 52) 0px 0px 10px -6px;
   backdrop-filter: blur(10px);
-  background: linear-gradient(to right, #f4eaff88, #defbff);
+  background: linear-gradient(to right, #f6eeffe0, #ddf8fcdc);
   border-radius: 8px;
-  height: 280px;
-  width: 300px;
+  height: 350px;
+  width: 420px;
   font-size: large;
   font-family: monospace;
 }
@@ -34,10 +33,10 @@
 
 .user-head {
   display: flex;
-  flex-direction: row;
-  gap: 20px;
+  flex-direction: column;
+  gap: 10px;
   width: 100%;
-  justify-content: center;
+  align-items: center;
 }
 
 .user-head img {
@@ -47,9 +46,104 @@
   border: rgb(127, 140, 141) 1px solid;
 }
 
-.user-head p {
+.name-input-container p {
+  margin: 0px;
   font-size: 1.1rem;
   font-weight: 400;
   color: #000000d7;
-  border-bottom: #929292 1px solid;
+}
+
+.profile-container {
+  display: flex;
+  align-items: end;
+  height: 100%;
+  padding: 4px;
+}
+
+.user-name {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 40px;
+}
+
+.name-input-container {
+  text-align: center;
+  justify-content: center;
+  display: flex;
+  height: 100%;
+}
+
+.name-input-container input {
+  border-radius: 8px;
+  border: 1px rgba(0, 0, 0, 0.3) solid;
+  width: 90%;
+}
+
+.edit-btns-container {
+  position: absolute;
+  right: 0;
+  height: 100%;
+  display: flex;
+  gap: 8px;
+  padding-right: 12px;
+}
+
+.edit-btns-container button {
+  background: rgba(0, 0, 0, 0.08);
+  height: 100%;
+  padding: 0 10px 0 10px;
+}
+
+.info {
+  display: flex;
+  /* gap: 6px; */
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #333;
+  width: 100%;
+  padding: 0px 8px 4px 8px;
+  box-sizing: border-box;
+}
+
+.info div {
+  font-size: small;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info div p {
+  margin: 0;
+}
+
+/* .css-dev-only-do-not-override-11mmrso.ant-btn-variant-text {
+  color: rgb(155 20 20 / 88%) !important;
+} */
+.logout.css-dev-only-do-not-override-11mmrso.ant-btn-variant-text {
+  background: rgba(255, 0, 0, 0.025);
+}
+
+.logout.css-dev-only-do-not-override-11mmrso.ant-btn-variant-text span {
+  color: rgb(155, 20, 20) !important;
+}
+
+.delete.css-dev-only-do-not-override-11mmrso.ant-btn-variant-outlined {
+  background: rgba(255, 228, 228, 0.836);
+  border: 1px solid rgba(255, 0, 0, 0.1);
+}
+.delete.css-dev-only-do-not-override-11mmrso.ant-btn-variant-outlined span {
+  color: rgb(37, 0, 0) !important;
+}
+
+.delete.css-dev-only-do-not-override-11mmrso.ant-btn-variant-outlined:hover {
+  background: rgb(255, 200, 200);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+}
+
+.delete.css-dev-only-do-not-override-11mmrso.ant-btn-variant-outlined
+  span:hover {
+  color: rgb(100, 0, 0) !important;
 }

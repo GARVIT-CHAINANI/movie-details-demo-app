@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { deleteDoc, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, db, githubProvider, googleProvider } from "../config/firebase";
 import {
   createUserWithEmailAndPassword,
@@ -138,5 +138,40 @@ export const updateProfileName = async (newName) => {
     console.log("✅ Display name updated in both Firestore & Auth");
   } catch (error) {
     console.error("❌ Error updating name:", error.message);
+  }
+};
+
+export const getUserFromFirestore = async (uid) => {
+  try {
+    const userRef = doc(db, "users", uid);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      return userSnap.data();
+    } else {
+      console.warn("❌ No user found in Firestore for UID:", uid);
+      return null;
+    }
+  } catch (error) {
+    console.error("❌ Error fetching user from Firestore:", error.message);
+    return null;
+  }
+};
+
+export const deleteUserFromFirestore = async () => {
+  try {
+    const user = auth.currentUser;
+    if (!user) throw new Error("No user is currently signed in.");
+
+    // Delete user document from Firestore
+    const userRef = doc(db, "users", user.uid);
+    await deleteDoc(userRef);
+    console.log("User document deleted from Firestore.");
+
+    // Delete user from Firebase Authentication
+    await user.delete();
+    console.log("User deleted from Firebase Authentication.");
+  } catch (error) {
+    console.error("Error deleting user:", error);
   }
 };
