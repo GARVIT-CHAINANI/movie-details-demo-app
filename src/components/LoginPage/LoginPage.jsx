@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 
 import "./loginPage.css";
 import logo from "../../assets/ChatGPT Image Sep 12, 2025, 01_08_10 PM.png";
-import Login from "../LoginPage/logIn.jsx";
+import Login from "../LoginPage/Login.jsx";
 import { useAuth } from "../../utils/hooks/useAuth.js";
 
 export default function LoginPage() {
