@@ -122,28 +122,30 @@
 /* .css-dev-only-do-not-override-11mmrso.ant-btn-variant-text {
   color: rgb(155 20 20 / 88%) !important;
 } */
-.logout.css-dev-only-do-not-override-11mmrso.ant-btn-variant-text {
+.ant-btn.css-11mmrso.ant-btn-text.ant-btn-color-default.ant-btn-variant-text.logout {
   background: rgba(255, 0, 0, 0.025);
 }
 
-.logout.css-dev-only-do-not-override-11mmrso.ant-btn-variant-text span {
+.ant-btn.css-11mmrso.ant-btn-text.ant-btn-color-default.ant-btn-variant-text.logout
+  span {
   color: rgb(155, 20, 20) !important;
 }
 
-.delete.css-dev-only-do-not-override-11mmrso.ant-btn-variant-outlined {
+.ant-btn.css-11mmrso.ant-btn-default.ant-btn-color-default.ant-btn-variant-outlined.delete {
   background: rgba(255, 228, 228, 0.836);
   border: 1px solid rgba(255, 0, 0, 0.1);
 }
-.delete.css-dev-only-do-not-override-11mmrso.ant-btn-variant-outlined span {
+.ant-btn.css-11mmrso.ant-btn-default.ant-btn-color-default.ant-btn-variant-outlined.delete
+  span {
   color: rgb(37, 0, 0) !important;
 }
 
-.delete.css-dev-only-do-not-override-11mmrso.ant-btn-variant-outlined:hover {
+.ant-btn.css-11mmrso.ant-btn-default.ant-btn-color-default.ant-btn-variant-outlined.delete:hover {
   background: rgb(255, 200, 200);
   border: 1px solid rgba(255, 0, 0, 0.3);
 }
 
-.delete.css-dev-only-do-not-override-11mmrso.ant-btn-variant-outlined
+.ant-btn.css-11mmrso.ant-btn-default.ant-btn-color-default.ant-btn-variant-outlined.delete
   span:hover {
   color: rgb(100, 0, 0) !important;
 }
