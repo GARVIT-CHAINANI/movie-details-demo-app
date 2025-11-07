@@ -90,11 +90,14 @@ export const githubSignInFn = async () => {
     const userRef = doc(db, "users", user.uid);
     const userSnap = await getDoc(userRef);
 
+    const displayNameToUse =
+      user.displayName || user.reloadUserInfo.screenName || "GitHub User";
+
     if (!userSnap.exists()) {
       await setDoc(userRef, {
         uid: user.uid,
         email: user.email,
-        displayName: user.displayName || "",
+        displayName: displayNameToUse,
         photoURL: user.photoURL || "",
         provider: "github",
         createdAt: new Date(),

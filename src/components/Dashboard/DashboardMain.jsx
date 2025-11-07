@@ -140,6 +140,12 @@ const DashboardMain = () => {
     };
   }
 
+  // console.log(firestoreUser, "fu");
+  // console.log(currentUser, "cu");
+  // console.log(userDa);
+
+  // const userName = currentUser?.providerData?.providerId === "firebase" ? currentUser?.reloadUserInfo?.screenName:
+
   return (
     <main className="dashboard">
       <h1>This is Dashboard</h1>
