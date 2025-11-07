@@ -109,7 +109,7 @@ export const githubSignInFn = async () => {
 export const forgetPasswordFn = async (email) => {
   try {
     await sendPasswordResetEmail(auth, email, {
-      url: "http://localhost:5173/auth?mode=login",
+      url: "https://firebase-demo-project.netlify.app/auth?mode=login",
     });
     alert("Password reset email sent! Please check your inbox or spam folder.");
   } catch (error) {
