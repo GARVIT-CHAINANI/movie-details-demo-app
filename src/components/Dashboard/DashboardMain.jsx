@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Divider, Spin, Modal, message } from "antd";
+import { Button, Divider, Spin, Modal, message, Input } from "antd";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../config/firebase";
@@ -60,36 +60,56 @@ const DashboardMain = () => {
   };
 
   const handleDeleteAccount = () => {
-    Modal.confirm({
-      title: "Are you sure you want to delete your account?",
-      content: (
-        <>
-          This action cannot be undone. Your account will be permanently
-          deleted.
-          <br />
-          <br />
-          <span style={{ fontStyle: "italic", opacity: 0.8 }}>— Garvit</span>
-        </>
-      ),
-      okText: "Yes, Delete",
-      okType: "danger",
-      cancelText: "Cancel",
-      async onOk() {
-        try {
-          setIsDeleting(true);
-          await deleteUserFromFirestore();
-          message.success("Account deleted successfully!");
-          setTimeout(() => {
-            navigate("/"); // ✅ Proper navigation
-          }, 1000);
-        } catch (error) {
-          console.error(error);
-          message.error("Error deleting account. Please try again.");
-        } finally {
-          setIsDeleting(false);
-        }
-      },
-    });
+    if (firestoreUser.provider === "email") {
+      let passwordInput = "";
+      Modal.confirm({
+        title: "Enter your password to delete your account",
+        content: (
+          <Input.Password
+            placeholder="Enter your password"
+            onChange={(e) => (passwordInput = e.target.value)}
+          />
+        ),
+        okText: "Delete Account",
+        okType: "danger",
+        cancelText: "Cancel",
+        async onOk() {
+          try {
+            setIsDeleting(true);
+            await deleteUserFromFirestore(passwordInput);
+            message.success("Account deleted successfully!");
+            setTimeout(() => navigate("/"), 1000);
+          } catch (error) {
+            console.error(error);
+            message.error(error.message || "Error deleting account.");
+          } finally {
+            setIsDeleting(false);
+          }
+        },
+      });
+    } else {
+      // For Google/GitHub users
+      Modal.confirm({
+        title: "Are you sure you want to delete your account?",
+        content: "This action cannot be undone.",
+        okText: "Delete Account",
+        okType: "danger",
+        cancelText: "Cancel",
+        async onOk() {
+          try {
+            setIsDeleting(true);
+            await deleteUserFromFirestore();
+            message.success("Account deleted successfully!");
+            setTimeout(() => navigate("/"), 1000);
+          } catch (error) {
+            console.error(error);
+            message.error(error.message || "Error deleting account.");
+          } finally {
+            setIsDeleting(false);
+          }
+        },
+      });
+    }
   };
 
   if (!firestoreUser) {

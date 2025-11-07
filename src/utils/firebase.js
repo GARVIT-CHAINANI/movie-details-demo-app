@@ -2,6 +2,11 @@ import { deleteDoc, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, db, githubProvider, googleProvider } from "../config/firebase";
 import {
   createUserWithEmailAndPassword,
+  EmailAuthProvider,
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  reauthenticateWithCredential,
+  reauthenticateWithPopup,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -158,20 +163,34 @@ export const getUserFromFirestore = async (uid) => {
   }
 };
 
-export const deleteUserFromFirestore = async () => {
+export const deleteUserFromFirestore = async (password = null) => {
   try {
     const user = auth.currentUser;
     if (!user) throw new Error("No user is currently signed in.");
 
-    // Delete user document from Firestore
+    // Reauthenticate based on provider
+    const provider = user.providerData[0].providerId;
+
+    if (provider === "password") {
+      if (!password) throw new Error("Password required to delete this user.");
+      const credential = EmailAuthProvider.credential(user.email, password);
+      await reauthenticateWithCredential(user, credential);
+    } else if (provider === "google.com") {
+      await reauthenticateWithPopup(user, new GoogleAuthProvider());
+    } else if (provider === "github.com") {
+      await reauthenticateWithPopup(user, new GithubAuthProvider());
+    }
+
+    // Delete Firestore document
     const userRef = doc(db, "users", user.uid);
     await deleteDoc(userRef);
     console.log("User document deleted from Firestore.");
 
-    // Delete user from Firebase Authentication
+    // Delete user from Auth
     await user.delete();
     console.log("User deleted from Firebase Authentication.");
   } catch (error) {
     console.error("Error deleting user:", error);
+    throw error;
   }
 };
