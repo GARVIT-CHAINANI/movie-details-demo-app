@@ -22,6 +22,7 @@ import {
   LogoutOutlined,
   MailOutlined,
 } from "@ant-design/icons";
+import ImageGallery from "./imageGallery";
 
 const DashboardMain = () => {
   const { currentUser } = useAuth();
@@ -252,6 +253,8 @@ const DashboardMain = () => {
       >
         Delete Account
       </Button>
+
+      <ImageGallery />
     </main>
   );
 };

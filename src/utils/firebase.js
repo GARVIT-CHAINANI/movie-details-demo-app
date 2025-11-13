@@ -1,5 +1,11 @@
 import { deleteDoc, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { auth, db, githubProvider, googleProvider } from "../config/firebase";
+import {
+  auth,
+  db,
+  githubProvider,
+  googleProvider,
+  storage,
+} from "../config/firebase";
 import {
   createUserWithEmailAndPassword,
   EmailAuthProvider,
@@ -12,6 +18,14 @@ import {
   signInWithPopup,
   updateProfile,
 } from "firebase/auth";
+import {
+  getDownloadURL,
+  getMetadata,
+  listAll,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
+import { v4 } from "uuid";
 
 export const signUpfn = async (email, password) => {
   try {
@@ -196,4 +210,41 @@ export const deleteUserFromFirestore = async (password = null) => {
     console.error("Error deleting user:", error);
     throw error;
   }
+};
+
+// image upload fn - STORAGE
+
+export const uploadImage = async (imageUpload) => {
+  if (!imageUpload) return;
+  console.log(imageUpload);
+
+  const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
+  await uploadBytes(imageRef, imageUpload);
+  console.log("Image Uploaded");
+};
+
+export const getImagesList = async () => {
+  const imageListRef = ref(storage, "images/");
+  const allImagesResponse = await listAll(imageListRef);
+
+  const images = await Promise.all(
+    allImagesResponse.items.map(async (itemRef) => {
+      const [url, metadata] = await Promise.all([
+        getDownloadURL(itemRef),
+        getMetadata(itemRef),
+      ]);
+
+      return {
+        name: metadata.name,
+        fullPath: metadata.fullPath,
+        size: metadata.size, // in bytes
+        contentType: metadata.contentType,
+        updated: metadata.updated, // upload/update date
+        url,
+      };
+    })
+  );
+
+  console.log("Images:", images);
+  return images;
 };
