@@ -22,7 +22,7 @@ import {
   LogoutOutlined,
   MailOutlined,
 } from "@ant-design/icons";
-import ImageGallery from "./imageGallery";
+import ImageGallery from "./ImageGallery";
 
 const DashboardMain = () => {
   const { currentUser } = useAuth();
